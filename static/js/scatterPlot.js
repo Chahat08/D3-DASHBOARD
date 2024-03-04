@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Once data is fetched, create the scatter plot matrix
             createScatterPlotMatrix(top_attribute_data, top_attributes);
+            createAttributeTable(top_attributes);
         })
         .catch(error => console.error('Error:', error));
 
@@ -108,6 +109,26 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr("x", padding)
             .attr("y", padding)
             .attr("dy", ".71em")
+            .text(d => d);
+    }
+
+    // Function to create attribute table
+    function createAttributeTable(attributes) {
+        const table = d3.select('#attributeTable').append('table');
+        const header = table.append('thead').append('tr');
+        const body = table.append('tbody');
+
+        // Add header row
+        header.append('th').text('Top Attributes');
+
+        // Add rows for each attribute
+        const rows = body.selectAll('tr')
+            .data(attributes)
+            .enter()
+            .append('tr');
+
+        // Add attribute names to first column
+        rows.append('td')
             .text(d => d);
     }
 });
