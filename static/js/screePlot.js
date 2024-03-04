@@ -1,6 +1,5 @@
 // screePlot.js
-document.addEventListener('DOMContentLoaded', function () {
-    
+document.addEventListener('DOMContentLoaded', function () {    
     fetch('/pca_data')
         .then(response => response.json())
         .then(data => {
@@ -29,17 +28,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 .data(explained_variance_ratio)
                 .enter()
                 .append('rect')
+                .attr('class', "screeRect")
                 .attr('x', (d, i) => xScale(i + 1)) // adjust x position
                 .attr('y', d => yScale(d))
                 .attr('width', xScale.bandwidth())
                 .attr('height', d => 350 - yScale(d))
                 .attr('fill', 'steelblue')
-                .attr('index', (d, i)=>i)
+                .attr('index', (d, i) => i)
                 .on('click', function (event, d, i) {
                     svg.selectAll("rect")
                         .attr("fill", "steelblue");
                     d3.select(this)
                         .attr("fill", "red");
+                    const barClickEvent = new CustomEvent('barClicked');
+                    document.dispatchEvent(barClickEvent);
                     const index = this.getAttribute('index');
                     // Send the selected dimensionality index to the server
                     fetch('/set_di', {

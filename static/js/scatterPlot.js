@@ -1,18 +1,33 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Fetch top attributes and corresponding data from backend
-    fetch('/get_top_attributes')
-        .then(response => response.json())
-        .then(data => {
-            const top_attributes = data.top_attributes;
-            const top_attribute_data = data.data;
+    document.addEventListener('barClicked', function (event) {
+        fetchAndUpdateScatterPlotData();
+    });
 
-            // Once data is fetched, create the scatter plot matrix
-            createScatterPlotMatrix(top_attribute_data, top_attributes);
-            createAttributeTable(top_attributes);
-        })
-        .catch(error => console.error('Error:', error));
+    fetchAndUpdateScatterPlotData();
 
-    // Function to create scatter plot matrix
+    let svg = d3.select('#scatterPlot').select("svg");
+
+    function fetchAndUpdateScatterPlotData() {
+        // Fetch top attributes and corresponding data from backend
+        fetch('/get_top_attributes')
+            .then(response => response.json())
+            .then(data => {
+                const top_attributes = data.top_attributes;
+                const top_attribute_data = data.data;
+
+                // Remove existing SVG
+                svg.remove();
+
+                // Remove existing table
+                d3.select('#attributeTable').select("table").remove();
+
+                // Once data is fetched, create the scatter plot matrix
+                createScatterPlotMatrix(top_attribute_data, top_attributes);
+                createAttributeTable(top_attributes);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     function createScatterPlotMatrix(data, columns) {
         // Specify the chart’s dimensions
         const width = 928;
@@ -54,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .call(g => g.selectAll(".tick line").attr("stroke", "#ddd"));
 
         // Create SVG element
-        const svg = d3.select('#scatterPlot').append("svg")
+        svg = d3.select('#scatterPlot').append("svg")
             .attr("width", width)
             .attr("height", height)
             .attr("viewBox", [-padding, 0, width, height]);
