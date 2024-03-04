@@ -5,6 +5,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from sklearn.impute import SimpleImputer
+from sklearn.cluster import KMeans
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -38,6 +39,18 @@ def get_pca_data():
     }
     
     return jsonify(chart_data)
+
+@app.route('/elbow_plot_data')
+def get_elbow_plot_data():
+    distortions = []
+    K_range = range(1, 11)  # You can adjust the range of K values as needed
+
+    for k in K_range:
+        kmeans = KMeans(n_clusters=k, random_state=0)
+        kmeans.fit(processed_data)
+        distortions.append(kmeans.inertia_)
+
+    return jsonify({'K_range': list(K_range), 'distortions': distortions})
    
 
 @app.route('/set_di', methods=['POST'])
