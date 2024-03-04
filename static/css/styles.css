@@ -1,6 +1,11 @@
 .main-container {
-    margin: 20px; /* Adjust margin as needed */
+    margin: 20px; 
 }
 .center-heading {
     text-align: center;
+}
+
+.overlay {
+    fill: transparent;
+    pointer-events: all;
 }

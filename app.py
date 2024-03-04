@@ -82,5 +82,12 @@ def get_top_attributes():
     return jsonify({'top_attributes': top_attributes, 'data': top_attribute_data})
 
 
+@app.route('/update_k', methods=['POST'])
+def update_k():
+    print(request.get_json())
+    k = request.json.get('k')
+    session['k'] = k
+    return jsonify({'success': True}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
