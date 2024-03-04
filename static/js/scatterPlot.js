@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr("cy", d => y[j](d[columns[j]]))
                 .attr("r", 3.5)
                 .attr("fill-opacity", 0.7)
-                .attr("fill", d => color(d.species));
+                .attr("fill", d => color(d.cluster)); // Use cluster information for coloring
         });
 
         // Append text labels

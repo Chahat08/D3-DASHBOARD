@@ -63,23 +63,32 @@ def set_dimensionality_index():
 
 @app.route('/get_top_attributes')
 def get_top_attributes():
-    di = session.get('dimensionality_index', None)
-    if di is None:
-        return jsonify({'error': 'Dimensionality index not set'})
+    di = session.get('dimensionality_index', 4) # default di = 4
 
     pca = PCA(n_components=di)
     pca.fit(processed_data)
-    
+
     loadings = pca.components_
-    squared_sum_loadings = np.sum(loadings**2, axis=0)
+    squared_sum_loadings = np.sum(loadings ** 2, axis=0)
     top_indices = np.argsort(squared_sum_loadings)[::-1][:4]
-    
+
     top_attributes = [data.columns[i] for i in top_indices]
 
     # Extract data corresponding to top attributes
-    top_attribute_data = data[top_attributes].to_dict(orient='records')
+    top_attribute_data = data[top_attributes]
 
-    return jsonify({'top_attributes': top_attributes, 'data': top_attribute_data})
+    # Cluster the data using K-Means
+    k = session.get('k', 3)  # Default value of k is 3
+    kmeans = KMeans(n_clusters=k, random_state=0)
+    clusters = kmeans.fit_predict(top_attribute_data)
+
+    # Add cluster information to the data
+    top_attribute_data['cluster'] = clusters
+
+    # Convert dataframe to list of dictionaries
+    data_list = top_attribute_data.to_dict(orient='records')
+
+    return jsonify({'top_attributes': top_attributes, 'data': data_list})
 
 
 @app.route('/update_k', methods=['POST'])

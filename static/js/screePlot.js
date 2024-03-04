@@ -36,6 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr('fill', 'steelblue')
                 .attr('index', (d, i)=>i)
                 .on('click', function (event, d, i) {
+                    svg.selectAll("rect")
+                        .attr("fill", "steelblue");
+                    d3.select(this)
+                        .attr("fill", "red");
                     const index = this.getAttribute('index');
                     // Send the selected dimensionality index to the server
                     fetch('/set_di', {
