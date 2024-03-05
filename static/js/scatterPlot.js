@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const width = scatterColWidth;
         const height = scatterColHeight;
         const padding = 20;
-        const size = (width - (columns.length + 1) * padding) / columns.length + padding - 30;
+        const size = (width - (columns.length + 1) * padding) / columns.length + padding;
 
         // Define the horizontal scales (one for each row)
         const x = columns.map(c => d3.scaleLinear()
@@ -82,11 +82,20 @@ document.addEventListener('DOMContentLoaded', function () {
         svg = d3.select('#scatterPlot').append("svg")
             .attr("width", width)
             .attr("height", height)
-            .attr("viewBox", [-padding, 0, width, height]);
+            .attr("viewBox", [-padding, -padding, width, height]);
 
         // Append style
         svg.append("style")
             .text(`circle.hidden { fill: #000; fill-opacity: 1; r: 1px; }`);
+
+        // Append title
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", 0)
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("font-weight", "bold")
+            .text("Scatter Plot Matrix");
 
         // Append x-axis
         svg.append("g")
@@ -118,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .join("circle")
                 .attr("cx", d => x[i](d[columns[i]]))
                 .attr("cy", d => y[j](d[columns[j]]))
-                .attr("r", 3.5)
+                .attr("r", 1.5)
                 .attr("fill-opacity", 0.7)
                 .attr("fill", d => color(d.cluster)); // Use cluster information for coloring
         });
@@ -155,5 +164,23 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add attribute names to first column
         rows.append('td')
             .text(d => d);
+    }
+
+    function createAttributeTable(attributes) {
+        const table = d3.select('.attributeTable').select('tbody');
+
+        // Remove existing rows
+        table.selectAll('tr').remove();
+
+        // Add rows for each attribute
+        const rows = table.selectAll('tr')
+            .data(attributes)
+            .enter()
+            .append('tr');
+
+        // Add attribute names to first column
+        rows.append('td')
+            .text(d => d)
+            .style("font-size", d => d === "DiabetesPedigreeFunction" ? "6px" : "10px");
     }
 });

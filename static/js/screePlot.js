@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const columnWidth = document.querySelector('.screeCol').offsetWidth;
             const columnHeight = document.querySelector('.screeCol').offsetHeight;
 
+            const paddingLeft = 50; // Set padding for left
             const paddingRight = 0; // Set padding for right
-            const paddingBottom = 20; // Set padding for bottom
+            const paddingBottom = 30; // Set padding for bottom
             const paddingTop = 10; // Set padding for top
 
             // Create SVG container
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Create scales
             const xScale = d3.scaleBand()
                 .domain(d3.range(1, explained_variance_ratio.length + 1)) // start from 1
-                .range([35, columnWidth - paddingRight]) // adjust based on column width
+                .range([paddingLeft, columnWidth - paddingRight]) // adjust based on column width and padding
                 .padding(0.1);
 
             const yScale = d3.scaleLinear()
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .data(yScale.ticks(5))
                 .enter().append('line')
                 .attr('class', 'horizontal-grid-line')
-                .attr('x1', 35)
+                .attr('x1', paddingLeft)
                 .attr('x2', columnWidth - paddingRight)
                 .attr('y1', d => yScale(d))
                 .attr('y2', d => yScale(d))
@@ -63,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .enter()
                 .append('rect')
                 .attr('class', "screeRect")
+                .attr('id', (d, i)=>"screeRect"+i)
                 .attr('x', (d, i) => xScale(i + 1)) // adjust x position
                 .attr('y', d => yScale(d))
                 .attr('width', xScale.bandwidth())
@@ -79,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.dispatchEvent(barClickEvent);
                     const index = this.getAttribute('index');
                     lastClickedIndex = parseInt(index);
+                    d3.select('.diValue').text(parseInt(index)+1)
                     // Send the selected dimensionality index to the server
                     fetch('/set_di', {
                         method: 'POST',
@@ -107,21 +110,40 @@ document.addEventListener('DOMContentLoaded', function () {
             //.tickFormat(d => `${d}`); // label principal components
             svg.append('g')
                 .attr('transform', `translate(0, ${columnHeight - paddingBottom})`)
-                .call(xAxis);
+                .call(xAxis)
+                .selectAll('text')
+                .style('font-size', '10px'); // Font size
 
             const yAxis = d3.axisLeft(yScale)
                 .tickFormat(d3.format('.0%')); // format as percentage
-            svg.append('g')
-                .attr('transform', `translate(35, 0)`)
+            const yAxisGroup = svg.append('g')
+                .attr('transform', `translate(${paddingLeft}, 0)`) // adjust based on left padding
                 .call(yAxis);
+
+            yAxisGroup.selectAll('text')
+                .style('font-size', '10px'); // Font size
 
             // Label the chart
             svg.append('text')
                 .attr('x', columnWidth / 2)
                 .attr('y', paddingTop + 5) // adjust y position
                 .style('text-anchor', 'middle')
+                .style('font-size', '16px') // Font size
                 .style('font-weight', 'bold')
                 .text('Scree Plot');
+
+            // Add labels for axes
+            svg.append('text')
+                .attr('transform', `translate(${columnWidth / 2}, ${columnHeight - 5})`)
+                .style('text-anchor', 'middle')
+                .style('font-size', '14px') // Font size
+                .text('Principal Component');
+
+            svg.append('text')
+                .attr('transform', `translate(${paddingLeft - 35}, ${columnHeight / 2}) rotate(-90)`) // adjust based on left padding
+                .style('text-anchor', 'middle')
+                .style('font-size', '14px') // Font size
+                .text('Explained Variance Ratio');
 
             // Interaction elements
             const dot = svg.append('circle')
@@ -146,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             svg.on('mousemove', function (event) {
                 const [x, y] = d3.pointer(event, this);
-                const index = Math.floor((x - 35) / ((columnWidth - 35 - paddingRight) / explained_variance_ratio.length));
+                const index = Math.floor((x - paddingLeft) / ((columnWidth - paddingLeft - paddingRight) / explained_variance_ratio.length)); // adjust based on left padding
                 const xPos = xScale(index + 1) + xScale.bandwidth() / 2;
                 const yPos = yScale(explained_variance_cumsum[index]);
 
@@ -160,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .attr('y2', columnHeight - paddingBottom)
                     .style('display', 'block');
 
-                yLine.attr('x1', 35)
+                yLine.attr('x1', paddingLeft) // adjust based on left padding
                     .attr('y1', yPos)
                     .attr('x2', xPos)
                     .attr('y2', yPos)
@@ -175,16 +197,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             svg.on('mouseleave', function () {
                 // Draw lines over the last clicked bar
-                if (lastClickedIndex !== null) {
-                    const xPos = xScale(lastClickedIndex + 1) + xScale.bandwidth() / 2;
-                    const yPos = yScale(explained_variance_cumsum[lastClickedIndex]);
+                let currIdx = lastClickedIndex !== null ? lastClickedIndex : 3;
+                
+                const xPos = xScale(currIdx + 1) + xScale.bandwidth() / 2;
+                const yPos = yScale(explained_variance_cumsum[currIdx]);
                     xLine.attr('x1', xPos)
                         .attr('y1', yPos)
                         .attr('x2', xPos)
                         .attr('y2', columnHeight - paddingBottom)
                         .style('display', 'block');
 
-                    yLine.attr('x1', 35)
+                    yLine.attr('x1', paddingLeft) // adjust based on left padding
                         .attr('y1', yPos)
                         .attr('x2', xPos)
                         .attr('y2', yPos)
@@ -196,15 +219,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     text.attr('x', xPos + 10)
                         .attr('y', yPos - 10)
-                        .text(`PC${lastClickedIndex + 1}, ${d3.format('.1%')(explained_variance_cumsum[lastClickedIndex])}`)
+                        .text(`PC${currIdx + 1}, ${d3.format('.1%')(explained_variance_cumsum[currIdx])}`)
                         .style('display', 'block');
-
-                } else {
-                    // If no bar was clicked, hide the lines
-                    xLine.style('display', 'none');
-                    yLine.style('display', 'none');
-                }
             });
+
+            const xPos = xScale(3 + 1) + xScale.bandwidth() / 2;
+            const yPos = yScale(explained_variance_cumsum[3]);
+            xLine.attr('x1', xPos)
+                .attr('y1', yPos)
+                .attr('x2', xPos)
+                .attr('y2', columnHeight - paddingBottom)
+                .style('display', 'block');
+
+            yLine.attr('x1', paddingLeft) // adjust based on left padding
+                .attr('y1', yPos)
+                .attr('x2', xPos)
+                .attr('y2', yPos)
+                .style('display', 'block');
+
+            dot.attr('cx', xPos)
+                .attr('cy', yPos)
+                .style('display', 'block');
+
+            text.attr('x', xPos + 10)
+                .attr('y', yPos - 10)
+                .text(`PC${3 + 1}, ${d3.format('.1%')(explained_variance_cumsum[3])}`)
+                .style('display', 'block');
+
+            d3.select("#screeRect3").attr("fill", "red");
+
         })
         .catch(error => console.error('Error:', error));
 });

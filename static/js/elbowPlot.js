@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // Define padding values
-    const margin = { top: 7, right: 15, bottom: 50, left: 50 };
+    const margin = { top: 7, right: 15, bottom: 33, left: 50 };
 
     fetch('/elbow_plot_data')
         .then(response => response.json())
@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .data(distortions)
                 .enter().append("circle")
                 .attr("class", "dot")
+                .attr("id", (d, i)=>"dot"+i)
                 .attr("cx", (d, i) => xScale(i + 1))
                 .attr("cy", (d) => yScale(d))
                 .attr("r", 5)
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.dispatchEvent(dotClickEvent);
                     const index = this.getAttribute('index');
                     lastClickedIndex = parseInt(index);
+                    d3.select('.kValue').text(parseInt(index) + 1)
                     // Send the selected dimensionality index to the server
                     fetch('/update_k', {
                         method: 'POST',
@@ -169,10 +171,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             svg.on('mouseleave', function () {
                 // Draw lines over the last clicked bar
-                if (lastClickedIndex !== null) {
-                    const xPos = xScale(lastClickedIndex + 1);
-                    const yPos = yScale(distortions[lastClickedIndex]);
-                    
+                let currIdx = lastClickedIndex !== null ? lastClickedIndex : 2;
+                
+                    const xPos = xScale(currIdx + 1);
+                const yPos = yScale(distortions[currIdx]);
+
                     xLine.attr('x1', xPos)
                         .attr('y1', yPos)
                         .attr('x2', xPos)
@@ -187,30 +190,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     text.attr('x', xPos + 10)
                         .attr('y', yPos - 10)
-                        .text(`K: ${lastClickedIndex + 1}, Distortion: ${distortions[lastClickedIndex].toFixed(1)
-                }`)
+                        .text(`K: ${currIdx + 1}, Distortion: ${distortions[currIdx].toFixed(1)
+                            }`)
                         .style('display', 'block');
-
-                } else {
-                    // If no bar was clicked, hide the lines
-                    xLine.style('display', 'none');
-                    yLine.style('display', 'none');
-                }
+                
             });
+
+            if (lastClickedIndex === null) {
+                // default values for the interaction lines before click
+                const xPos = xScale(2 + 1);
+                const yPos = yScale(distortions[2]);
+
+                xLine.attr('x1', xPos)
+                    .attr('y1', yPos)
+                    .attr('x2', xPos)
+                    .attr('y2', height)
+                    .style('display', 'block');
+
+                yLine.attr('x1', 0)
+                    .attr('y1', yPos)
+                    .attr('x2', xPos)
+                    .attr('y2', yPos)
+                    .style('display', 'block');
+
+                d3.select("#dot2").attr("fill", "red");
+
+                text.attr('x', xPos + 10)
+                    .attr('y', yPos - 10)
+                    .text(`K: ${2 + 1}, Distortion: ${distortions[2].toFixed(1)
+                        }`)
+                    .style('display', 'block');
+            }
+
 
             // Add X axis
             svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(xScale));
+                .call(d3.axisBottom(xScale))
+                .selectAll('text')
+                .style('font-size', '10px');
 
             // Add Y axis
             svg.append("g")
-                .call(d3.axisLeft(yScale));
+                .call(d3.axisLeft(yScale))
+                .selectAll('text')
+                .style('font-size', '10px');
 
             // Add labels
             svg.append("text")
                 .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
                 .style("text-anchor", "middle")
+                .style("font-size", "14px") // Decrease font size
                 .text("Number of clusters (K)");
 
             svg.append("text")
@@ -219,7 +249,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr("x", 0 - (height / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
+                .style("font-size", "14px") // Decrease font size
                 .text("Distortion");
+
+            // Add title
+            svg.append("text")
+                .attr("x", (width / 2))
+                .attr("y", margin.top + 5)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px") 
+                .style("font-weight", "bold") 
+                .text("Elbow Plot");
 
         }).catch(error => console.error('Error:', error));
 
