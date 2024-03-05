@@ -4,135 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSE 564 Lab 2</title>
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .col {
-            flex: 1;
-            margin-right: 10px;
-            width: 49%;
-        }
-
+    
         .graph-container {
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: calc(50vh - 40px);
+            height: 43vh; 
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .border {
+            border: 1px solid #ccc; 
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
+        body {
+            overflow: hidden; /* Disable scrolling */
         }
+
+        .scatterCol{
+            height: 90vh;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container-fluid">
         <!-- Heading -->
-        <h1>Pima Diabetes Visualization</h1>
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center">Pima Diabetes Visualization</h1>
+            </div>
+        </div>
 
         <!-- Main Content -->
         <div class="row">
-            <!-- Left Column -->
-            <div class="col">
+            <!-- Right Column -->
+            <div class="col-md-6">
                 <!-- First Row (Scree Plot and Elbow Plot) -->
-                <div class="row">
+                <div class="row mb-4">
                     <div class="col">
-                        <div class="graph-container screeCol">
-                            <div id="screePlot"></div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="graph-container elbowCol">
-                            <div id="elbowPlot"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="border graph-container screeCol">
+                                    <div id="screePlot"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border graph-container elbowCol">
+                                    <div id="elbowPlot"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Second Row (Biplot) -->
-                <div class="row">
-                    <div class="col">
-                        <div class="graph-container elbowCol">
+                <!-- Biplot -->
+                <div class="row mb-4">
+                    <div class="col-md-10">
+                        <div class="border graph-container">
                             <div id="biPlot">Biplot</div>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <table class="table graph-container table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="2" class="text-center">Top Attributes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
+
             </div>
 
-            <!-- Right Column -->
-            <div class="col">
-                <!-- Table -->
-                <div class="graph-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="5">Table Heading</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Row 1, Col 1</td>
-                                <td>Row 1, Col 2</td>
-                                <td>Row 1, Col 3</td>
-                                <td>Row 1, Col 4</td>
-                                <td>Row 1, Col 5</td>
-                            </tr>
-                            <tr>
-                                <td>Row 2, Col 1</td>
-                                <td>Row 2, Col 2</td>
-                                <td>Row 2, Col 3</td>
-                                <td>Row 2, Col 4</td>
-                                <td>Row 2, Col 5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+            <!-- Left Column -->
+            <div class="col-md-6">
                 <!-- Scatterplot Matrix -->
-                <div class="graph-container">
-                    <div id="scatterPlot">Scatterplot Matrix</div>
+                <div class="row">
+                    <div class="col">
+                        <div class="border scatterCol">
+                            <div id="scatterPlot"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="{{ url_for('static', filename='js/screePlot.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scatterPlot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/elbowPlot.js') }}"></script> 
+    <script src="{{ url_for('static', filename='js/elbowPlot.js') }}"></script>
 </body>
 </html>

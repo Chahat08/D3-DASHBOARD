@@ -76,22 +76,22 @@ document.addEventListener('DOMContentLoaded', function () {
             const dot = svg.append('circle')
                 .attr('r', 5)
                 .attr('fill', 'steelblue')
-                .style('display', 'none');
+                .style('display', 'block');
 
             const xLine = svg.append('line')
                 .attr('stroke', 'black')
                 .attr('stroke-width', 1)
                 .attr('stroke-dasharray', '3,3')
-                .style('display', 'none');
+                .style('display', 'block');
 
             const yLine = svg.append('line')
                 .attr('stroke', 'black')
                 .attr('stroke-width', 1)
                 .attr('stroke-dasharray', '3,3')
-                .style('display', 'none');
+                .style('display', 'block');
 
             const text = svg.append('text')
-                .style('display', 'none');
+                .style('display', 'block');
 
             let lastClickedIndex = null;
 
@@ -126,11 +126,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
             svg.on('mousemove', function (event) {
+
                 const [x, y] = d3.pointer(event, this);
                 let nearestIndex = -1;
                 let minDistance = Number.MAX_VALUE;
 
-                // Loop through all dots to find the nearest one
                 distortions.forEach((d, i) => {
                     const xPos = xScale(i + 1);
                     const yPos = yScale(d);

@@ -33,11 +33,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createScatterPlotMatrix(data, columns) {
-        // Specify the chart’s dimensions
-        const width = 928;
-        const height = width;
-        const padding = 28;
-        const size = (width - (columns.length + 1) * padding) / columns.length + padding;
+        // Get dimensions of the scatterCol div
+        const scatterColWidth = document.querySelector('.scatterCol').offsetWidth;
+        const scatterColHeight = document.querySelector('.scatterCol').offsetHeight;
+
+        // Specify the chart’s dimensions based on scatterCol dimensions
+        const width = scatterColWidth;
+        const height = scatterColHeight;
+        const padding = 20;
+        const size = (width - (columns.length + 1) * padding) / columns.length + padding - 30;
 
         // Define the horizontal scales (one for each row)
         const x = columns.map(c => d3.scaleLinear()
@@ -60,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr("transform", (d, i) => `translate(${i * size},0)`)
             .each(function (d) { return d3.select(this).call(axisx.scale(d)); })
             .call(g => g.select(".domain").remove())
-            .call(g => g.selectAll(".tick line").attr("stroke", "#ddd"));
+            .call(g => g.selectAll(".tick line").attr("stroke", "#ddd"))
+            .call(g => g.selectAll(".tick text").style("font-size", "8px"));;
 
         // Define the vertical axis
         const axisy = d3.axisLeft()
@@ -70,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr("transform", (d, i) => `translate(0,${i * size})`)
             .each(function (d) { return d3.select(this).call(axisy.scale(d)); })
             .call(g => g.select(".domain").remove())
-            .call(g => g.selectAll(".tick line").attr("stroke", "#ddd"));
+            .call(g => g.selectAll(".tick line").attr("stroke", "#ddd"))
+            .call(g => g.selectAll(".tick text").style("font-size", "8px"));;
 
         // Create SVG element
         svg = d3.select('#scatterPlot').append("svg")
