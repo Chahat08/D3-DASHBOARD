@@ -1,19 +1,138 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>CSE 564 Lab 2</title>
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .col {
+            flex: 1;
+            margin-right: 10px;
+            width: 49%;
+        }
+
+        .graph-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: calc(50vh - 40px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <div id="screePlot"></div>
-    <div id="scatterPlot"></div>
-    <div id="attributeTable"></div>
-    <div id="elbowPlot"></div>
+
+    <div class="container">
+        <!-- Heading -->
+        <h1>Pima Diabetes Visualization</h1>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col">
+                <!-- First Row (Scree Plot and Elbow Plot) -->
+                <div class="row">
+                    <div class="col">
+                        <div class="graph-container screeCol">
+                            <div id="screePlot"></div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="graph-container elbowCol">
+                            <div id="elbowPlot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row (Biplot) -->
+                <div class="row">
+                    <div class="col">
+                        <div class="graph-container elbowCol">
+                            <div id="biPlot">Biplot</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col">
+                <!-- Table -->
+                <div class="graph-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="5">Table Heading</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Row 1, Col 1</td>
+                                <td>Row 1, Col 2</td>
+                                <td>Row 1, Col 3</td>
+                                <td>Row 1, Col 4</td>
+                                <td>Row 1, Col 5</td>
+                            </tr>
+                            <tr>
+                                <td>Row 2, Col 1</td>
+                                <td>Row 2, Col 2</td>
+                                <td>Row 2, Col 3</td>
+                                <td>Row 2, Col 4</td>
+                                <td>Row 2, Col 5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Scatterplot Matrix -->
+                <div class="graph-container">
+                    <div id="scatterPlot">Scatterplot Matrix</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="{{ url_for('static', filename='js/screePlot.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scatterPlot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/elbowPlot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/elbowPlot.js') }}"></script> 
 </body>
 </html>

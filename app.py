@@ -19,6 +19,8 @@ processed_data = imputer.fit_transform(data)
 scaler = StandardScaler()
 processed_data = scaler.fit_transform(processed_data)
 
+k=3
+di=4
 
 @app.route('/')
 def index():
@@ -56,14 +58,16 @@ def get_elbow_plot_data():
 @app.route('/set_di', methods=['POST'])
 def set_dimensionality_index():
     request_data = request.get_json()
+    global di
     di = request_data['di']
-    session['dimensionality_index'] = di
+    #session['dimensionality_index'] = di
 
     return jsonify({'message': 'Dimensionality index set successfully'})
 
 @app.route('/get_top_attributes')
 def get_top_attributes():
-    di = session.get('dimensionality_index', 4) # default di = 4
+    #di = session.get('dimensionality_index', 4) # default di = 4
+    global di, k
 
     pca = PCA(n_components=di)
     pca.fit(processed_data)
@@ -78,7 +82,8 @@ def get_top_attributes():
     top_attribute_data = data[top_attributes]
 
     # Cluster the data using K-Means
-    k = session.get('k', 3)  # Default value of k is 3
+    #k = session.get('k', 3)  # Default value of k is 3
+    print(k)
     kmeans = KMeans(n_clusters=k, random_state=0)
     clusters = kmeans.fit_predict(top_attribute_data)
 
@@ -94,8 +99,9 @@ def get_top_attributes():
 @app.route('/update_k', methods=['POST'])
 def update_k():
     print(request.get_json())
+    global k
     k = request.json.get('k')
-    session['k'] = k
+    #session['k'] = k
     return jsonify({'success': True}), 200
 
 if __name__ == '__main__':

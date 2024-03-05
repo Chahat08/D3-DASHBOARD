@@ -3,6 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchAndUpdateScatterPlotData();
     });
 
+    document.addEventListener('dotClicked', function (event) {
+        fetchAndUpdateScatterPlotData();
+    });
+
     fetchAndUpdateScatterPlotData();
 
     let svg = d3.select('#scatterPlot').select("svg");
