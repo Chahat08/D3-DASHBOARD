@@ -1,4 +1,3 @@
-# app.py (Flask application)
 from flask import Flask, render_template, jsonify, request, session
 import pandas as pd
 from sklearn.decomposition import PCA
@@ -44,19 +43,23 @@ def get_pca_data():
 
 @app.route('/biplot_data')
 def biplot_data():
+    global di, k
+
     pca = PCA()
     pca.fit(processed_data)
     
-    # Get PC scores and loadings for biplot
     pc_scores = pca.transform(processed_data)
     loadings = pca.components_
     
-    # Prepare biplot data
+    kmeans = KMeans(n_clusters=k, random_state=0)
+    clusters = kmeans.fit_predict(processed_data)
+    
     biplot_data = {
         'scores': pc_scores.tolist(),
         'loadings': loadings.tolist(),
         'feature_names': data.columns.tolist(),
-        'observation_names': data.index.tolist()
+        'observation_names': data.index.tolist(),
+        'clusters': clusters.tolist()
     }
     
     return jsonify(biplot_data)
@@ -64,7 +67,7 @@ def biplot_data():
 @app.route('/elbow_plot_data')
 def get_elbow_plot_data():
     distortions = []
-    K_range = range(1, 11)  # You can adjust the range of K values as needed
+    K_range = range(1, 11) 
 
     for k in K_range:
         kmeans = KMeans(n_clusters=k, random_state=0)
@@ -79,13 +82,11 @@ def set_dimensionality_index():
     request_data = request.get_json()
     global di
     di = request_data['di']
-    #session['dimensionality_index'] = di
 
     return jsonify({'message': 'Dimensionality index set successfully'})
 
 @app.route('/get_top_attributes')
 def get_top_attributes():
-    #di = session.get('dimensionality_index', 4) # default di = 4
     global di, k
 
     pca = PCA(n_components=di)
@@ -96,23 +97,18 @@ def get_top_attributes():
     top_indices = np.argsort(squared_sum_loadings)[::-1][:4]
 
     top_attributes = [data.columns[i] for i in top_indices]
-
-    # Extract data corresponding to top attributes
+    top_loadings = list(squared_sum_loadings[top_indices])
+    
     top_attribute_data = data[top_attributes]
 
-    # Cluster the data using K-Means
-    #k = session.get('k', 3)  # Default value of k is 3
-    print(k)
     kmeans = KMeans(n_clusters=k, random_state=0)
     clusters = kmeans.fit_predict(top_attribute_data)
 
-    # Add cluster information to the data
     top_attribute_data['cluster'] = clusters
 
-    # Convert dataframe to list of dictionaries
     data_list = top_attribute_data.to_dict(orient='records')
-
-    return jsonify({'top_attributes': top_attributes, 'data': data_list})
+    
+    return jsonify({'top_attributes': top_attributes, 'top_loadings':top_loadings, 'data': data_list})
 
 
 @app.route('/update_k', methods=['POST'])
@@ -120,7 +116,6 @@ def update_k():
     print(request.get_json())
     global k
     k = request.json.get('k')
-    #session['k'] = k
     return jsonify({'success': True}), 200
 
 if __name__ == '__main__':

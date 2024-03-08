@@ -18,16 +18,17 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 const top_attributes = data.top_attributes;
                 const top_attribute_data = data.data;
+                const top_loadings = data.top_loadings;
 
                 // Remove existing SVG
                 svg.remove();
 
                 // Remove existing table
-                d3.select('#attributeTable').select("table").remove();
+                d3.select('#attributeTableBody').select("table").remove();
 
                 // Once data is fetched, create the scatter plot matrix
                 createScatterPlotMatrix(top_attribute_data, top_attributes);
-                createAttributeTable(top_attributes);
+                createAttributeTable(top_attributes, top_loadings);
             })
             .catch(error => console.error('Error:', error));
     }
@@ -52,9 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const y = x.map(x => x.copy().range([size - padding / 2, padding / 2]));
 
         // Define the color scale
-        const color = d3.scaleOrdinal()
-            .domain(data.map(d => d.species)) // Assuming species attribute is present in your data
-            .range(d3.schemeCategory10);
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
 
         // Define the horizontal axis
         const axisx = d3.axisBottom()
@@ -146,41 +145,20 @@ document.addEventListener('DOMContentLoaded', function () {
             .text(d => d);
     }
 
-    // Function to create attribute table
-    function createAttributeTable(attributes) {
-        const table = d3.select('#attributeTable').append('table');
-        const header = table.append('thead').append('tr');
-        const body = table.append('tbody');
-
-        // Add header row
-        header.append('th').text('Top Attributes');
+    function createAttributeTable(attributes, loadings) {
+        const tableBody = d3.select('#attributeTableBody');
 
         // Add rows for each attribute
-        const rows = body.selectAll('tr')
+        const rows = tableBody.selectAll('tr')
             .data(attributes)
             .enter()
-            .append('tr');
+            .append('tr')
+            .style("background-color", (d, i) => i % 2 === 0 ? "#ffffff" : "#f2f2f2"); // Alternate row colors
 
-        // Add attribute names to first column
+        // Add attribute names and loadings to each row
         rows.append('td')
-            .text(d => d);
-    }
-
-    function createAttributeTable(attributes) {
-        const table = d3.select('.attributeTable').select('tbody');
-
-        // Remove existing rows
-        table.selectAll('tr').remove();
-
-        // Add rows for each attribute
-        const rows = table.selectAll('tr')
-            .data(attributes)
-            .enter()
-            .append('tr');
-
-        // Add attribute names to first column
-        rows.append('td')
-            .text(d => d)
+            .html((d, i) => d + "<br>" + '('+loadings[i].toFixed(2)+')')
             .style("font-size", d => d === "DiabetesPedigreeFunction" ? "6px" : "10px");
+
     }
 });

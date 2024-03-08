@@ -1,11 +1,61 @@
-.main-container {
-    margin: 20px; 
-}
-.center-heading {
-    text-align: center;
+.graph-container1 {
+    height: 45vh;
+    margin: 5px !important;
+    padding: 0px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
-.overlay {
-    fill: transparent;
-    pointer-events: all;
+.graph-container2 {
+    height: 45vh;
+    margin: 5px !important;
+    padding: 0px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.valTable {
+    margin: 5px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.border {
+    border: 1px solid #ccc;
+}
+
+body {
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    overflow: hidden;
+}
+
+.scatterCol {
+    height: 93vh;
+    margin: 5px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.heading-col {
+    max-height: 6vh;
+    background-color: black;
+    color: white;
+}
+
+.dashboardElement {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.tableHead {
+    background-color: steelblue;
+}
+
+.tableRow2 {
+    background-color: red;
 }
