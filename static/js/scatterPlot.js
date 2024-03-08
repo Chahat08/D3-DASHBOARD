@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 d3.select('#attributeTableBody').select("table").remove();
 
-                createScatterPlotMatrix(top_attribute_data, top_attributes);
                 createAttributeTable(top_attributes, top_loadings);
+                createScatterPlotMatrix(top_attribute_data, top_attributes);
             })
             .catch(error => console.error('Error:', error));
     }
@@ -126,17 +126,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createAttributeTable(attributes, loadings) {
-        const tableBody = d3.select('#attributeTableBody');
+        d3.select('#attributeTableBody').selectAll('tr').remove();
 
-        const rows = tableBody.selectAll('tr')
+        let tableBody = d3.select('#attributeTableBody');
+
+        let rows = tableBody.selectAll('tr')
             .data(attributes)
             .enter()
             .append('tr')
-            .style("background-color", (d, i) => i % 2 === 0 ? "#ffffff" : "#f2f2f2"); 
+            .style("background-color", (d, i) => i % 2 === 0 ? "#ffffff" : "#f2f2f2");
 
         rows.append('td')
-            .html((d, i) => d + "<br>" + '('+loadings[i].toFixed(2)+')')
+            .html((d, i) => d + "<br>" + '(' + loadings[i].toFixed(2) + ')')
             .style("font-size", d => d === "DiabetesPedigreeFunction" ? "6px" : "10px");
-
     }
 });
