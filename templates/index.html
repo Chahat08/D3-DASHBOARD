@@ -5,11 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSE 564 Lab 2</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
 
-        .graph-container {
-            height: 43vh;
+        .graph-container1 {
+            height: 45vh;
+            margin: 5px !important;
+            padding: 0px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .graph-container2 {
+            height: 45vh;
+            margin: 5px !important;
+            padding: 0px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);        
+        }
+
+        .valTable {
+            margin: 5px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         }
 
         .border {
@@ -17,11 +35,33 @@
         }
 
         body {
-            overflow: hidden; /* Disable scrolling */
+            font-family: "Roboto Mono", monospace;
+            font-optical-sizing: auto;
+            font-weight: 700;
+            font-style: normal;
+            overflow: hidden;
         }
 
         .scatterCol {
-            height: 90vh;
+            height: 93vh;
+            margin: 5px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .heading-col {
+            max-height: 6vh;
+            background-color: darkgray;
+        }
+
+        .dashboardElement {
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
         }
     </style>
 </head>
@@ -30,8 +70,8 @@
     <div class="container-fluid">
         <!-- Heading -->
         <div class="row">
-            <div class="col">
-                <h1 class="text-center">Pima Diabetes Visualization</h1>
+            <div class="col heading-col dashboardElement">
+                <h1 class="text-center align-self-center">Pima Diabetes Visualization</h1>
             </div>
         </div>
 
@@ -40,16 +80,16 @@
             <!-- Right Column -->
             <div class="col-md-6">
                 <!-- First Row (Scree Plot and Elbow Plot) -->
-                <div class="row mb-4">
+                <div class="row">
                     <div class="col">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="border graph-container screeCol">
+                            <div class="col-md-6 dashboardElement">
+                                <div class="border graph-container1 screeCol">
                                     <div id="screePlot"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="border graph-container elbowCol">
+                            <div class="col-md-6 dashboardElement">
+                                <div class="border graph-container1 elbowCol">
                                     <div id="elbowPlot"></div>
                                 </div>
                             </div>
@@ -58,10 +98,10 @@
                 </div>
 
                 <!-- Biplot -->
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="border graph-container">
-                            <div id="biPlot">Biplot</div>
+                <div class="row">
+                    <div class="col-md-12 dashboardElement">
+                        <div class="border graph-container2 biPlotCol">
+                            <div id="biPlot"></div>
                         </div>
                     </div>
                 </div>
@@ -72,15 +112,15 @@
             <div class="col-md-6">
                 <!-- Scatterplot Matrix -->
                 <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-10 dashboardElement">
                         <div class="border scatterCol">
                             <div id="scatterPlot"></div>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered attributeTable graph-container">
+                            <div class="col-md-12 dashboardElement">
+                                <table class="table table-bordered attributeTable valTable">
                                     <thead>
                                         <tr>
                                             <th class="text-center">Top Attributes</th>
@@ -88,24 +128,24 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="text-center align-middle"></td>
+                                            <td class="text-center align-self-center"></td>
                                         </tr>
                                         <tr>
-                                            <td class=" text-center align-middle"></td>
+                                            <td class=" text-center align-self-center"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-center align-middle"></td>
+                                            <td class="text-center align-self-center"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-center align-middle"></td>
+                                            <td class="text-center align-self-center"></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered">
+                            <div class="col-md-12 dashboardElement">
+                                <table class="table table-bordered valTable">
                                     <thead>
                                         <tr>
                                             <th class="text-center">di</th>
@@ -113,15 +153,15 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="text-center align-middle diValue">4</td>
+                                            <td class="text-center align-self-center diValue">4</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered">
+                            <div class="col-md-12 dashboardElement">
+                                <table class="table table-bordered valTable">
                                     <thead>
                                         <tr>
                                             <th class="text-center">K</th>
@@ -141,7 +181,9 @@
         </div>
     </div>
 
+
     <script src="{{ url_for('static', filename='js/screePlot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/biPlot.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scatterPlot.js') }}"></script>
     <script src="{{ url_for('static', filename='js/elbowPlot.js') }}"></script>
 </body>

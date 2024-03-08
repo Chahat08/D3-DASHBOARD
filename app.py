@@ -42,6 +42,25 @@ def get_pca_data():
     
     return jsonify(chart_data)
 
+@app.route('/biplot_data')
+def biplot_data():
+    pca = PCA()
+    pca.fit(processed_data)
+    
+    # Get PC scores and loadings for biplot
+    pc_scores = pca.transform(processed_data)
+    loadings = pca.components_
+    
+    # Prepare biplot data
+    biplot_data = {
+        'scores': pc_scores.tolist(),
+        'loadings': loadings.tolist(),
+        'feature_names': data.columns.tolist(),
+        'observation_names': data.index.tolist()
+    }
+    
+    return jsonify(biplot_data)
+
 @app.route('/elbow_plot_data')
 def get_elbow_plot_data():
     distortions = []
