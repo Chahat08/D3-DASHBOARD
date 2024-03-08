@@ -1,20 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-    // Define padding values
     const margin = { top: 7, right: 15, bottom: 33, left: 50 };
 
     fetch('/elbow_plot_data')
         .then(response => response.json())
         .then(data => {
-            // Extract data
             const K_range = data.K_range;
             const distortions = data.distortions;
 
-            // Set up dimensions
             const width = document.querySelector('.elbowCol').offsetWidth - margin.left - margin.right;
             const height = document.querySelector('.elbowCol').offsetHeight - margin.top - margin.bottom;
 
-            // Create SVG element
             const svg = d3.select("#elbowPlot")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -22,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            // Set up scales
             const xScale = d3.scaleLinear()
                 .domain([1, K_range.length])
                 .range([0, width]);
@@ -31,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .domain(d3.extent(distortions))
                 .range([height, 0]);
 
-            // Add horizontal grid lines
             svg.append("g")
                 .attr("class", "grid")
                 .call(d3.axisLeft(yScale)
@@ -40,9 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     .tickSizeOuter(0)
                 )
                 .selectAll(".tick line")
-                .attr("stroke", "#ddd"); // Adjusted grid line color
+                .attr("stroke", "#ddd");
 
-            // Add vertical grid lines
             svg.append("g")
                 .attr("class", "grid")
                 .attr("transform", "translate(0," + height + ")")
@@ -52,14 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     .tickSizeOuter(0)
                 )
                 .selectAll(".tick line")
-                .attr("stroke", "#ddd"); // Adjusted grid line color
+                .attr("stroke", "#ddd"); 
 
-            // Define the line
             const line = d3.line()
                 .x((d, i) => xScale(i + 1))
                 .y(d => yScale(d));
 
-            // Draw the line
             svg.append("path")
                 .datum(distortions)
                 .attr("fill", "none")
@@ -67,12 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr("stroke-width", 2)
                 .attr("d", line);
 
-            // Add tooltips
             svg.selectAll(".dot")
                 .append("title")
                 .text((d, i) => `K: ${i + 1}, Distortion: ${d}`);
 
-            // Interaction elements
             const dot = svg.append('circle')
                 .attr('r', 5)
                 .attr('fill', 'steelblue')
@@ -95,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let lastClickedIndex = null;
 
-            // Add dots along the line
             svg.selectAll(".dot")
                 .data(distortions)
                 .enter().append("circle")
@@ -117,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     const index = this.getAttribute('index');
                     lastClickedIndex = parseInt(index);
                     d3.select('.kValue').text(parseInt(index) + 1)
-                    // Send the selected dimensionality index to the server
                     fetch('/update_k', {
                         method: 'POST',
                         headers: {
@@ -170,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             svg.on('mouseleave', function () {
-                // Draw lines over the last clicked bar
                 let currIdx = lastClickedIndex !== null ? lastClickedIndex : 2;
                 
                     const xPos = xScale(currIdx + 1);
@@ -197,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (lastClickedIndex === null) {
-                // default values for the interaction lines before click
                 const xPos = xScale(2 + 1);
                 const yPos = yScale(distortions[2]);
 
@@ -223,24 +207,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
 
-            // Add X axis
             svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(xScale))
                 .selectAll('text')
                 .style('font-size', '10px');
 
-            // Add Y axis
             svg.append("g")
                 .call(d3.axisLeft(yScale))
                 .selectAll('text')
                 .style('font-size', '10px');
 
-            // Add labels
             svg.append("text")
                 .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
                 .style("text-anchor", "middle")
-                .style("font-size", "14px") // Decrease font size
+                .style("font-size", "14px") 
                 .text("Number of clusters (K)");
 
             svg.append("text")
@@ -249,10 +230,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr("x", 0 - (height / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
-                .style("font-size", "14px") // Decrease font size
+                .style("font-size", "14px")
                 .text("Distortion");
 
-            // Add title
             svg.append("text")
                 .attr("x", (width / 2))
                 .attr("y", margin.top + 5)
