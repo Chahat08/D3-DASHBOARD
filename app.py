@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request, session
+from waitress import serve
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -7,7 +8,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.cluster import KMeans
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 data = pd.read_csv("static/data/diabetes.csv")  
 data.drop(columns=['Outcome'], inplace=True)
@@ -119,4 +119,4 @@ def update_k():
     return jsonify({'success': True}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    serve(app, host='0.0.0.0', port=8080)
